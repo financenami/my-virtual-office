@@ -8,11 +8,21 @@ import {
 } from 'firebase/auth';
 
 // --- Firebase 配置 ---
-const firebaseConfig = JSON.parse(__firebase_config);
+// 這裡已經換成你剛才申請到的專屬鑰匙了
+const firebaseConfig = {
+  apiKey: "AIzaSyDVFc2J-5PAo-cgHUVSaNpYXHCPkiQX930",
+  authDomain: "my-virtual-office-bcf46.firebaseapp.com",
+  projectId: "my-virtual-office-bcf46",
+  storageBucket: "my-virtual-office-bcf46.firebasestorage.app",
+  messagingSenderId: "202208413014",
+  appId: "1:202208413014:web:97e320ba1cdac4702982f7",
+  measurementId: "G-8DZQW8P1TL"
+};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'shizuka-office-v1';
+const appId = 'shizuka-office-v1'; // 這是你的辦公室編號
 
 // --- 常數定義 ---
 const MAP_SIZE = { width: 1200, height: 800 };
