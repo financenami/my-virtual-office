@@ -141,7 +141,6 @@ export default function App() {
         const nextY = Math.max(20, Math.min(MAP_SIZE.height - 20, currentPos.current.y + Math.sin(angle) * radius));
         
         targetPos.current = { x: nextX, y: nextY };
-        // 自動巡航時傳入當前 status 確保泡泡持續顯示
         syncPosition(nextX, nextY, status);
       }
     };
@@ -183,7 +182,6 @@ export default function App() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     targetPos.current = { x, y };
-    // 手動移動時同步當前狀態
     syncPosition(x, y, status);
   };
 
@@ -285,14 +283,19 @@ export default function App() {
     const hairColor = icon.hair;
     const faceColor = iconId === 'doraemon' ? '#ffffff' : '#ffdbac';
 
+    // 陰影
     ctx.fillStyle = 'rgba(0,0,0,0.05)';
     ctx.fillRect(x - 12, y + 14, 24, 6);
 
+    // 身體
     ctx.fillStyle = bodyColor;
     ctx.fillRect(x - 14, y - 4, 28, 18);
+    
+    // 臉
     ctx.fillStyle = faceColor;
     ctx.fillRect(x - 10, y - 18, 20, 16);
     
+    // 特殊角色造型處理
     if (iconId === 'doraemon') {
         ctx.fillStyle = '#03a9f4';
         ctx.fillRect(x - 12, y - 22, 24, 10);
@@ -307,11 +310,30 @@ export default function App() {
         ctx.fillRect(x + 8, y - 14, 6, 6);
         ctx.fillRect(x + 10, y - 8, 6, 6);
         ctx.fillRect(x + 8, y - 2, 6, 6);
+    } else if (iconId === 'cat') {
+        // 阿貓：尖耳朵
+        ctx.fillStyle = hairColor;
+        ctx.fillRect(x - 12, y - 26, 6, 8); // 左耳
+        ctx.fillRect(x + 6, y - 26, 6, 8);  // 右耳
+        ctx.fillRect(x - 12, y - 22, 24, 8); // 頭頂
+    } else if (iconId === 'dog') {
+        // 阿狗：垂耳/寬耳
+        ctx.fillStyle = hairColor;
+        ctx.fillRect(x - 14, y - 24, 8, 8); // 左耳
+        ctx.fillRect(x + 6, y - 24, 8, 8);  // 右耳
+        ctx.fillRect(x - 12, y - 22, 24, 8); // 頭頂
+    } else if (iconId === 'poop') {
+        // 大便：旋轉螺旋造型
+        ctx.fillStyle = hairColor;
+        ctx.fillRect(x - 12, y - 22, 24, 6); // 第一層（底）
+        ctx.fillRect(x - 8, y - 28, 16, 6);  // 第二層
+        ctx.fillRect(x - 4, y - 34, 8, 6);   // 第三層（頂）
     } else {
         ctx.fillStyle = hairColor;
         ctx.fillRect(x - 12, y - 22, 24, 8);
     }
 
+    // 眼睛
     ctx.fillStyle = '#000';
     if (iconId === 'nobita') {
         ctx.strokeStyle = '#000';
@@ -337,13 +359,11 @@ export default function App() {
     const bx = x - w / 2;
     const by = y - 70;
     
-    // 泡泡外框與背景
     ctx.fillStyle = '#475569';
     ctx.fillRect(bx - 2, by - 2, w + 4, h + 4);
     ctx.fillStyle = '#fff';
     ctx.fillRect(bx, by, w, h);
     
-    // 下方尖角
     ctx.fillStyle = '#475569';
     ctx.fillRect(x - 5, by + h, 10, 5);
     ctx.fillStyle = '#fff';
@@ -433,7 +453,6 @@ export default function App() {
       const x = isMe ? currentPos.current.x : u.x;
       const y = isMe ? currentPos.current.y : u.y;
       drawPixelAvatar(ctx, x, y, isMe, u.displayName, u.iconId);
-      // 持續繪製文字泡泡，只要 u.status 存在
       if (u.status && u.status.trim() !== '') {
         drawPixelBubble(ctx, x, y, u.status);
       }
@@ -454,12 +473,11 @@ export default function App() {
     syncPosition(currentPos.current.x, currentPos.current.y, status, newState, displayName, selectedIcon);
   };
 
-  // 處理按下 Enter 鍵同步狀態
   const handleStatusKeyDown = (e) => {
     if (e.key === 'Enter') {
       lastInteraction.current = Date.now();
       syncPosition(currentPos.current.x, currentPos.current.y, status);
-      e.target.blur(); // 按下 Enter 後取消聚焦，讓使用者看清楚泡泡
+      e.target.blur();
     }
   };
 
